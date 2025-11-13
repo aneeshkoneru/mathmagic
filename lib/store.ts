@@ -36,7 +36,7 @@ export interface GameState {
   mathFeelingScore?: number // 1-10
   currentDifficulty: number // 0-100
   sessionData: SessionData
-  currentGameType?: 'working-memory' | 'attention' | 'math-practice' | 'sequencing'
+  currentGameType?: 'working-memory' | 'attention' | 'math-practice' | 'sequencing' | 'addition' | 'subtraction' | 'number-recognition'
 }
 
 interface SessionStore {
