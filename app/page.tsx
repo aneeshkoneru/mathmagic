@@ -11,7 +11,8 @@ import { useSessionStore } from '@/lib/store'
 
 export default function Home() {
   const router = useRouter()
-  const { currentPhase, initializeSession } = useSessionStore()
+  const { gameState, initializeSession } = useSessionStore()
+  const currentPhase = gameState.currentPhase
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
