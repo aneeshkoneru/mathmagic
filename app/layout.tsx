@@ -4,7 +4,7 @@ import { Toaster } from 'react-hot-toast'
 import SessionProvider from '@/components/SessionProvider'
 
 export const metadata: Metadata = {
-  title: 'Math Adventure - Learn Math with Fun!',
+  title: "Aneesh Koneru's Math Adventure - Learn Math with Fun!",
   description: 'AI-Native, Gamified Math App for Dyscalculia & Math Anxiety',
 }
 

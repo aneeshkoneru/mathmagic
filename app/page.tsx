@@ -49,7 +49,7 @@ export default function Home() {
                 <Sparkles className="w-20 h-20 text-purple-600" />
               </div>
               <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-4">
-                Math Adventure
+                Aneesh Koneru's Math Adventure
               </h1>
               <p className="text-xl md:text-2xl text-gray-600 mb-8">
                 AI-Native, Gamified Math App for Dyscalculia & Math Anxiety

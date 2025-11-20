@@ -34,7 +34,7 @@ export default function WelcomeScreen() {
         </motion.div>
 
         <h1 className="text-5xl font-bold text-gray-800 mb-4">
-          Welcome to Math Adventure! 🎮
+          Welcome to Aneesh Koneru's Math Adventure! 🎮
         </h1>
         <p className="text-xl text-gray-600 mb-8">
           Let's learn math together in a fun way!

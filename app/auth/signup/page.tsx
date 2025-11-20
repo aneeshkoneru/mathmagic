@@ -62,11 +62,11 @@ export default function SignUpPage() {
           router.refresh()
         } else {
           // If auto sign-in fails, redirect to sign in page
-          toast.info('Account created! Please sign in.')
+          toast('Account created! Please sign in.', { icon: 'ℹ️' })
           router.push('/auth/signin')
         }
       } else {
-        toast.info('Account created! Please check your email to verify your account.')
+        toast('Account created! Please check your email to verify your account.', { icon: '📧' })
         router.push('/auth/signin')
       }
     } catch (error: any) {
