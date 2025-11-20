@@ -2,10 +2,13 @@
 
 import { useEffect, useState } from 'react'
 import { useSessionStore } from '@/lib/store'
+import { useSession } from '@/lib/useSession'
+import Header from '@/components/Header'
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 import { Trophy, TrendingUp, Clock, Target } from 'lucide-react'
 
 export default function Dashboard() {
+  const { user, isLoading } = useSession()
   const { gameState } = useSessionStore()
   const [analytics, setAnalytics] = useState<any>(null)
 
@@ -53,10 +56,23 @@ export default function Dashboard() {
     Questions: d.total,
   }))
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading...</p>
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 p-6">
-      <div className="max-w-6xl mx-auto">
-        <h1 className="text-4xl font-bold text-gray-800 mb-8">Progress Dashboard</h1>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
+      <Header />
+      <div className="p-6">
+        <div className="max-w-6xl mx-auto">
+          <h1 className="text-4xl font-bold text-gray-800 mb-8">Progress Dashboard</h1>
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
@@ -148,6 +164,7 @@ export default function Dashboard() {
             </div>
           </div>
         )}
+        </div>
       </div>
     </div>
   )
