@@ -1,6 +1,6 @@
 import NextAuth from 'next-auth'
 import Credentials from 'next-auth/providers/credentials'
-import { supabase } from './supabase'
+import { createClient } from '@supabase/supabase-js'
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
@@ -14,6 +14,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         if (!credentials?.email || !credentials?.password) {
           throw new Error('Email and password are required')
         }
+
+        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+        const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+        if (!supabaseUrl || !supabaseAnonKey) {
+          throw new Error('Supabase configuration is missing')
+        }
+
+        const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
         try {
           const { data, error } = await supabase.auth.signInWithPassword({

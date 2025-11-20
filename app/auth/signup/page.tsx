@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { supabase } from '@/lib/supabase'
+import { createClient } from '@supabase/supabase-js'
 import toast from 'react-hot-toast'
 
 export default function SignUpPage() {
@@ -16,6 +16,17 @@ export default function SignUpPage() {
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
+
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+    if (!supabaseUrl || !supabaseAnonKey) {
+      toast.error('Configuration error. Please contact support.')
+      setIsLoading(false)
+      return
+    }
+
+    const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
     try {
       const { data, error } = await supabase.auth.signUp({
