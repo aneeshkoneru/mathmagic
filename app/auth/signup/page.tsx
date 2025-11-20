@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { signIn } from 'next-auth/react'
 import { createClient } from '@supabase/supabase-js'
 import toast from 'react-hot-toast'
 
@@ -41,12 +42,36 @@ export default function SignUpPage() {
 
       if (error) {
         toast.error(error.message || 'Failed to create account')
+        setIsLoading(false)
+        return
+      }
+
+      if (data.user) {
+        // Automatically sign in after successful sign up
+        toast.success('Account created! Signing you in...')
+        
+        // Sign in with NextAuth
+        const signInResult = await signIn('credentials', {
+          email,
+          password,
+          redirect: false,
+        })
+
+        if (signInResult?.ok) {
+          router.push('/')
+          router.refresh()
+        } else {
+          // If auto sign-in fails, redirect to sign in page
+          toast.info('Account created! Please sign in.')
+          router.push('/auth/signin')
+        }
       } else {
-        toast.success('Account created! Please sign in.')
+        toast.info('Account created! Please check your email to verify your account.')
         router.push('/auth/signin')
       }
-    } catch (error) {
-      toast.error('An error occurred. Please try again.')
+    } catch (error: any) {
+      console.error('Sign up error:', error)
+      toast.error(error.message || 'An error occurred. Please try again.')
     } finally {
       setIsLoading(false)
     }

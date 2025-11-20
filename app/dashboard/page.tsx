@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Link from 'next/link'
 import { useSessionStore } from '@/lib/store'
 import { useSession } from '@/lib/useSession'
 import Header from '@/components/Header'
@@ -40,22 +41,6 @@ export default function Dashboard() {
     setAnalytics(calculateAnalytics())
   }, [gameState])
 
-  if (!analytics) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-gray-600">No data available yet. Complete a session to see your progress!</p>
-        </div>
-      </div>
-    )
-  }
-
-  const chartData = analytics.dailyData.map((d: any) => ({
-    name: d.day,
-    Accuracy: (d.correct / d.total) * 100,
-    Questions: d.total,
-  }))
-
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50">
@@ -66,6 +51,35 @@ export default function Dashboard() {
       </div>
     )
   }
+
+  if (!analytics) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
+        <Header />
+        <div className="flex items-center justify-center min-h-[calc(100vh-4rem)] p-6">
+          <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 text-center">
+            <Trophy className="w-16 h-16 text-yellow-500 mx-auto mb-4" />
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">Welcome to Your Dashboard!</h2>
+            <p className="text-gray-600 mb-6">
+              No data available yet. Complete a session to see your progress!
+            </p>
+            <Link
+              href="/"
+              className="inline-block bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700 transition"
+            >
+              Start Your First Session
+            </Link>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  const chartData = analytics.dailyData.map((d: any) => ({
+    name: d.day,
+    Accuracy: (d.correct / d.total) * 100,
+    Questions: d.total,
+  }))
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
