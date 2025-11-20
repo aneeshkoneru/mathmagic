@@ -27,8 +27,8 @@ export default function SignInPage() {
         toast.error('Invalid email or password. Please try again.')
       } else if (result?.ok) {
         toast.success('Signed in successfully!')
-        router.push('/')
-        router.refresh()
+        // Force a full page reload to ensure session is properly set
+        window.location.href = '/'
       }
     } catch (error) {
       console.error('Sign in error:', error)

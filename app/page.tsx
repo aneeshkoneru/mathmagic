@@ -14,7 +14,7 @@ import { Sparkles, BookOpen, Trophy, Target } from 'lucide-react'
 
 export default function Home() {
   const router = useRouter()
-  const { isAuthenticated, isLoading: sessionLoading } = useSession()
+  const { isAuthenticated, isLoading: sessionLoading, session } = useSession()
   const { gameState, initializeSession } = useSessionStore()
   const currentPhase = gameState.currentPhase
   const [isLoading, setIsLoading] = useState(true)
@@ -25,8 +25,13 @@ export default function Home() {
     setIsLoading(false)
   }, [initializeSession])
 
-  // Show loading state
-  if (sessionLoading || isLoading) {
+  // Debug: Log session state
+  useEffect(() => {
+    console.log('Session state:', { isAuthenticated, sessionLoading, hasSession: !!session })
+  }, [isAuthenticated, sessionLoading, session])
+
+  // Show loading state - wait a bit longer to ensure session is loaded
+  if (sessionLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50">
         <div className="text-center">
@@ -38,7 +43,7 @@ export default function Home() {
   }
 
   // If not authenticated, show landing page with sign up/sign in options
-  if (!isAuthenticated) {
+  if (!isAuthenticated && !sessionLoading) {
     return (
       <main className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
         <div className="min-h-screen flex flex-col items-center justify-center px-4 py-12">

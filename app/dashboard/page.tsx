@@ -63,12 +63,14 @@ export default function Dashboard() {
             <p className="text-gray-600 mb-6">
               No data available yet. Complete a session to see your progress!
             </p>
-            <Link
-              href="/"
+            <button
+              onClick={() => {
+                window.location.href = '/'
+              }}
               className="inline-block bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700 transition"
             >
               Start Your First Session
-            </Link>
+            </button>
           </div>
         </div>
       </div>

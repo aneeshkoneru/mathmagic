@@ -50,6 +50,9 @@ export default function SignUpPage() {
         // Automatically sign in after successful sign up
         toast.success('Account created! Signing you in...')
         
+        // Wait a moment for Supabase to process the user
+        await new Promise(resolve => setTimeout(resolve, 500))
+        
         // Sign in with NextAuth
         const signInResult = await signIn('credentials', {
           email,
@@ -58,11 +61,11 @@ export default function SignUpPage() {
         })
 
         if (signInResult?.ok) {
-          router.push('/')
-          router.refresh()
+          // Force a refresh to update session state
+          window.location.href = '/'
         } else {
           // If auto sign-in fails, redirect to sign in page
-          toast('Account created! Please sign in.', { icon: 'ℹ️' })
+          toast('Account created! Please sign in with your credentials.', { icon: 'ℹ️' })
           router.push('/auth/signin')
         }
       } else {
