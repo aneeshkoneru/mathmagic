@@ -59,4 +59,6 @@ The API will be available at `http://localhost:8000`
 - **Progress Dashboard**: Visual progress tracking for students, parents, and teachers
 - **Survey System**: Pre/post math anxiety measures
 
-# mathmagic
+## Live Demo
+
+Visit the app at: https://mathmagic-livid.vercel.app
