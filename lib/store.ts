@@ -20,6 +20,16 @@ export interface DiagnosticResult {
   estimatedSkillLevel: number // 0-100
 }
 
+export interface EngagementData {
+  focusTime: number
+  activeTime: number
+  interactionCount: number
+  mouseMovement: number
+  attentionScore: number
+  engagementScore: number
+  snapshots: Array<{ timestamp: number; isFocused: boolean; hasInteraction: boolean }>
+}
+
 export interface SessionData {
   sessionId: string
   startTime: number
@@ -27,6 +37,7 @@ export interface SessionData {
   mouseEvents: Array<{ x: number; y: number; timestamp: number }>
   answers: Array<{ questionId: string; answer: any; correct: boolean; timeSpent: number }>
   attentionChecks: Array<{ passed: boolean; timestamp: number }>
+  engagement?: EngagementData
 }
 
 export interface GameState {
@@ -54,6 +65,7 @@ interface SessionStore {
   logAttentionCheck: (passed: boolean) => void
   adjustDifficulty: (adjustment: number) => void
   setCurrentGameType: (type: GameState['currentGameType']) => void
+  saveEngagementData: (engagement: EngagementData) => void
   completeSession: () => void
 }
 
@@ -233,6 +245,17 @@ export const useSessionStore = create<SessionStore>()(
           gameState: {
             ...state.gameState,
             currentGameType: type,
+          },
+        }))
+      },
+      saveEngagementData: (engagement: EngagementData) => {
+        set((state) => ({
+          gameState: {
+            ...state.gameState,
+            sessionData: {
+              ...state.gameState.sessionData,
+              engagement,
+            },
           },
         }))
       },

@@ -6,7 +6,7 @@ import { useSessionStore } from '@/lib/store'
 import { useSession } from '@/lib/useSession'
 import Header from '@/components/Header'
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
-import { Trophy, TrendingUp, Clock, Target } from 'lucide-react'
+import { Trophy, TrendingUp, Clock, Target, Eye } from 'lucide-react'
 
 export default function Dashboard() {
   const { user, isLoading } = useSession()
@@ -29,12 +29,18 @@ export default function Dashboard() {
         return acc
       }, {})
 
+      const engagement = gameState.sessionData.engagement
+      
       return {
         dailyData: Object.values(dailyData),
         totalQuestions: answers.length,
         correctAnswers: answers.filter(a => a.correct).length,
         averageTime: answers.reduce((sum, a) => sum + a.timeSpent, 0) / answers.length,
         accuracy: (answers.filter(a => a.correct).length / answers.length) * 100,
+        engagementScore: engagement?.engagementScore || 0,
+        attentionScore: engagement?.attentionScore || 0,
+        focusTime: engagement?.focusTime || 0,
+        interactionCount: engagement?.interactionCount || 0,
       }
     }
 
@@ -115,20 +121,21 @@ export default function Dashboard() {
           <div className="bg-white rounded-xl shadow-md p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 text-sm">Total Questions</p>
-                <p className="text-3xl font-bold text-gray-800">{analytics.totalQuestions}</p>
+                <p className="text-gray-600 text-sm">Engagement</p>
+                <p className="text-3xl font-bold text-gray-800">{analytics.engagementScore}%</p>
+                <p className="text-xs text-gray-500 mt-1">Attention: {analytics.attentionScore}%</p>
               </div>
-              <TrendingUp className="w-10 h-10 text-blue-500" />
+              <Eye className="w-10 h-10 text-purple-500" />
             </div>
           </div>
 
           <div className="bg-white rounded-xl shadow-md p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 text-sm">Avg Time</p>
-                <p className="text-3xl font-bold text-gray-800">{Math.round(analytics.averageTime / 1000)}s</p>
+                <p className="text-gray-600 text-sm">Total Questions</p>
+                <p className="text-3xl font-bold text-gray-800">{analytics.totalQuestions}</p>
               </div>
-              <Clock className="w-10 h-10 text-purple-500" />
+              <TrendingUp className="w-10 h-10 text-blue-500" />
             </div>
           </div>
         </div>
