@@ -13,36 +13,58 @@ export default function EngagementMonitor() {
   const { logMouseEvent, saveEngagementData } = useSessionStore()
   const lastSaveTime = useRef(Date.now())
   const SAVE_INTERVAL = 10000 // Save every 10 seconds - token efficient
+  const [isClient, setIsClient] = useState(false)
 
   useEffect(() => {
+    setIsClient(true)
+  }, [])
+
+  useEffect(() => {
+    // Only run on client side
+    if (!isClient || typeof window === 'undefined') {
+      return
+    }
+
     // Track mouse movements
     const handleMouseMove = (e: MouseEvent) => {
-      trackMouse(e.clientX, e.clientY)
-      // Also log to session store (existing functionality)
-      logMouseEvent(e.clientX, e.clientY)
+      try {
+        trackMouse(e.clientX, e.clientY)
+        // Also log to session store (existing functionality)
+        logMouseEvent(e.clientX, e.clientY)
+      } catch (error) {
+        console.error('Error tracking mouse:', error)
+      }
     }
 
     // Track interactions
     const handleInteraction = () => {
-      trackInteraction()
+      try {
+        trackInteraction()
+      } catch (error) {
+        console.error('Error tracking interaction:', error)
+      }
     }
 
     // Save engagement data periodically
     const saveInterval = setInterval(() => {
-      const metrics = getMetrics()
-      const snapshots = getSnapshots()
-      
-      // Save compact snapshot data (token efficient - only essential info)
-      saveEngagementData({
-        ...metrics,
-        snapshots: snapshots.map(s => ({
-          timestamp: s.timestamp,
-          isFocused: s.isFocused,
-          hasInteraction: s.hasInteraction,
-        })),
-      })
-      
-      lastSaveTime.current = Date.now()
+      try {
+        const metrics = getMetrics()
+        const snapshots = getSnapshots()
+        
+        // Save compact snapshot data (token efficient - only essential info)
+        saveEngagementData({
+          ...metrics,
+          snapshots: snapshots.map(s => ({
+            timestamp: s.timestamp,
+            isFocused: s.isFocused,
+            hasInteraction: s.hasInteraction,
+          })),
+        })
+        
+        lastSaveTime.current = Date.now()
+      } catch (error) {
+        console.error('Error saving engagement data:', error)
+      }
     }, SAVE_INTERVAL)
 
     // Attach event listeners
@@ -59,18 +81,22 @@ export default function EngagementMonitor() {
       clearInterval(saveInterval)
       
       // Save final engagement data on unmount
-      const finalMetrics = getMetrics()
-      const finalSnapshots = getSnapshots()
-      saveEngagementData({
-        ...finalMetrics,
-        snapshots: finalSnapshots.map(s => ({
-          timestamp: s.timestamp,
-          isFocused: s.isFocused,
-          hasInteraction: s.hasInteraction,
-        })),
-      })
+      try {
+        const finalMetrics = getMetrics()
+        const finalSnapshots = getSnapshots()
+        saveEngagementData({
+          ...finalMetrics,
+          snapshots: finalSnapshots.map(s => ({
+            timestamp: s.timestamp,
+            isFocused: s.isFocused,
+            hasInteraction: s.hasInteraction,
+          })),
+        })
+      } catch (error) {
+        console.error('Error saving final engagement data:', error)
+      }
     }
-  }, [trackMouse, trackInteraction, getMetrics, getSnapshots, logMouseEvent, saveEngagementData])
+  }, [isClient, trackMouse, trackInteraction, getMetrics, getSnapshots, logMouseEvent, saveEngagementData])
 
   // This component doesn't render anything - it's just for tracking
   return null

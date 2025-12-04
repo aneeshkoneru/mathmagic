@@ -172,6 +172,11 @@ class EngagementTracker {
 let trackerInstance: EngagementTracker | null = null
 
 export function getEngagementTracker(): EngagementTracker {
+  // Only create tracker on client side
+  if (typeof window === 'undefined') {
+    throw new Error('EngagementTracker can only be used on the client side')
+  }
+  
   if (!trackerInstance) {
     trackerInstance = new EngagementTracker()
   }
@@ -181,6 +186,7 @@ export function getEngagementTracker(): EngagementTracker {
 // React hook for easy integration
 export function useEngagementTracking() {
   if (typeof window === 'undefined') {
+    // Return safe no-op functions for SSR
     return {
       trackMouse: () => {},
       trackInteraction: () => {},
@@ -198,15 +204,81 @@ export function useEngagementTracking() {
     }
   }
 
-  const tracker = getEngagementTracker()
+  try {
+    const tracker = getEngagementTracker()
 
-  return {
-    trackMouse: (x: number, y: number) => tracker.trackMouse(x, y),
-    trackInteraction: () => tracker.trackInteraction(),
-    getMetrics: () => tracker.getMetrics(),
-    getSnapshots: () => tracker.getSnapshots(),
-    getEngagementLevel: () => tracker.getEngagementLevel(),
-    reset: () => tracker.reset(),
+    return {
+      trackMouse: (x: number, y: number) => {
+        try {
+          tracker.trackMouse(x, y)
+        } catch (error) {
+          console.error('Error in trackMouse:', error)
+        }
+      },
+      trackInteraction: () => {
+        try {
+          tracker.trackInteraction()
+        } catch (error) {
+          console.error('Error in trackInteraction:', error)
+        }
+      },
+      getMetrics: () => {
+        try {
+          return tracker.getMetrics()
+        } catch (error) {
+          console.error('Error in getMetrics:', error)
+          return {
+            focusTime: 0,
+            activeTime: 0,
+            interactionCount: 0,
+            mouseMovement: 0,
+            attentionScore: 0,
+            engagementScore: 0,
+          }
+        }
+      },
+      getSnapshots: () => {
+        try {
+          return tracker.getSnapshots()
+        } catch (error) {
+          console.error('Error in getSnapshots:', error)
+          return []
+        }
+      },
+      getEngagementLevel: () => {
+        try {
+          return tracker.getEngagementLevel()
+        } catch (error) {
+          console.error('Error in getEngagementLevel:', error)
+          return 'low' as const
+        }
+      },
+      reset: () => {
+        try {
+          tracker.reset()
+        } catch (error) {
+          console.error('Error in reset:', error)
+        }
+      },
+    }
+  } catch (error) {
+    console.error('Error initializing engagement tracker:', error)
+    // Return safe no-op functions if tracker fails to initialize
+    return {
+      trackMouse: () => {},
+      trackInteraction: () => {},
+      getMetrics: () => ({
+        focusTime: 0,
+        activeTime: 0,
+        interactionCount: 0,
+        mouseMovement: 0,
+        attentionScore: 0,
+        engagementScore: 0,
+      }),
+      getSnapshots: () => [],
+      getEngagementLevel: () => 'low' as const,
+      reset: () => {},
+    }
   }
 }
 
