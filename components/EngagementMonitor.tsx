@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useEngagementTracking } from '@/lib/engagementTracker'
 import { useSessionStore } from '@/lib/store'
 
@@ -90,7 +90,7 @@ export function EngagementScoreDisplay() {
     }, 2000)
 
     return () => clearInterval(interval)
-  }, [])
+  }, [getMetrics])
 
   const level = getEngagementLevel()
   const colorClass = 
